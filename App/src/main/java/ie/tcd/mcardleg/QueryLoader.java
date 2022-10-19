@@ -6,7 +6,6 @@ public class QueryLoader {
 
     private String currentLine;
     private BufferedReader reader;
-    private String index;
     private String question;
 
     public QueryLoader(String currentLine, BufferedReader reader) {
@@ -22,9 +21,7 @@ public class QueryLoader {
             try {
                 switch (currentLine.charAt(1)) {
                     case 'I':
-                        index = currentLine.substring(3);
                         currentLine = reader.readLine();
-//                        System.out.println("Index: " + index);
                     case 'W':
                         String buffer = "";
                         currentLine = reader.readLine();
@@ -48,10 +45,6 @@ public class QueryLoader {
 
     public String getCurrentLine() {
         return currentLine;
-    }
-
-    public String getIndex() {
-        return index;
     }
 
     public String getQuestion() {

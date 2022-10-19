@@ -6,8 +6,8 @@ public class App {
     public static void main(String[] args) throws IOException {
         IndexConfig indexConfig = new IndexConfig(args);
 
-        IndexBuilder indexBuilder = new IndexBuilder(indexConfig);
-        indexBuilder.buildIndex();
+        Indexer indexer = new Indexer(indexConfig);
+        indexer.buildIndex();
 
         Querier querier = new Querier(indexConfig);
         try {
@@ -15,7 +15,6 @@ public class App {
         } catch(Exception e) {
             System.err.println(e);
         }
-//        indexConfig.postingsDemo();
 
         indexConfig.shutdown();
     }

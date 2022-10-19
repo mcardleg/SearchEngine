@@ -2,5 +2,5 @@ ie\tcd\mcardleg\QueryLoader.class
 ie\tcd\mcardleg\App.class
 ie\tcd\mcardleg\IndexConfig.class
 ie\tcd\mcardleg\DocumentLoader.class
-ie\tcd\mcardleg\IndexBuilder.class
+ie\tcd\mcardleg\Indexer.class
 ie\tcd\mcardleg\Querier.class

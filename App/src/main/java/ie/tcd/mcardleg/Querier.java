@@ -45,19 +45,19 @@ public class Querier {
         return boosts;
     }
 
-    private Query buildQuery(Map.Entry<String, String> queryMapEntry) throws ParseException {
+    private Query buildQuery(String queryString) throws ParseException {
         QueryParser parser = new MultiFieldQueryParser(
                 new String[] {"title", "author", "bibliography", "text"},
                 indexConfig.getAnalyzer(),
                 buildBooster());
 
-        return parser.parse(queryMapEntry.getValue());
+        return parser.parse(queryString);
     }
 
-    private HashMap<String, String> parseQueries() {
+    private ArrayList<String> parseQueries() {
         Path cranDocumentsPath = Paths.get(CRAN_QUERIES_DIRECTORY);
         Boolean finished = false;
-        HashMap<String, String> queries = new HashMap<String, String>();
+        ArrayList<String> queries = new ArrayList<String>();
 
         try(BufferedReader reader = Files.newBufferedReader(cranDocumentsPath, Charset.forName("UTF-8"))){
             String currentLine = reader.readLine();
@@ -66,7 +66,7 @@ public class Querier {
 
             while (!finished) {
                 QueryLoader queryLoader = new QueryLoader(currentLine, reader);
-                queries.put(queryLoader.getIndex(), queryLoader.getQuestion().replace("?", ""));
+                queries.add(queryLoader.getQuestion().replace("?", ""));
                 currentLine = queryLoader.getCurrentLine();
 
                 if (currentLine == null) {
@@ -82,8 +82,8 @@ public class Querier {
         return queries;
     }
 
-    private ArrayList<String> search(Map.Entry<String, String> queryMapEntry) throws ParseException, IOException {
-        Query query = buildQuery(queryMapEntry);
+    private ArrayList<String> search(Integer queryIndex, String queryString) throws ParseException, IOException {
+        Query query = buildQuery(queryString);
 
         ScoreDoc[] hits = isearcher.search(query, MAX_RESULTS).scoreDocs;
         if (hits.length <= 0) {
@@ -94,7 +94,7 @@ public class Querier {
         ArrayList<String> results = new ArrayList<String>();
         for (ScoreDoc hit : hits) {
             Document hitDoc = isearcher.doc(hit.doc);
-            results.add(queryMapEntry.getKey() + " Q0 " + hitDoc.get("index") + " 1 " + hit.score + " STANDARD \n");
+            results.add(queryIndex + " Q0 " + hitDoc.get("index") + " 1 " + hit.score + " STANDARD \n");
         }
         return results;
     }
@@ -102,11 +102,13 @@ public class Querier {
     private ArrayList<String> searchAllQueries() throws IOException, ParseException {
         ArrayList<String> results = new ArrayList<String>();
 
-        HashMap<String, String> queries = parseQueries();
+        ArrayList<String> queries = parseQueries();
 
         System.out.println("Performing queries.");
-        for (Map.Entry<String, String> queryMapEntry : queries.entrySet()) {
-            results.addAll(search(queryMapEntry));
+        Integer queryIndex = 1;
+        for (String queryString : queries) {
+            results.addAll(search(queryIndex, queryString));
+            queryIndex++;
         }
         System.out.println("Finished queries.");
 
