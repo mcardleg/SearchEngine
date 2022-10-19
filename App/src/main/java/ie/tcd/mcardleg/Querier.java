@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class Querier {
 
-    private static int MAX_RESULTS = 10;
+    private static int MAX_RESULTS = 1400;
     private static final String CRAN_QUERIES_DIRECTORY = "../cran/cran.qry";
     private static final String RESULTS_DIRECTORY = "../results";
 
