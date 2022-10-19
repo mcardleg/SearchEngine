@@ -1,0 +1,61 @@
+package ie.tcd.mcardleg;
+
+import java.io.BufferedReader;
+
+public class QueryLoader {
+
+    private String currentLine;
+    private BufferedReader reader;
+    private String index;
+    private String question;
+
+    public QueryLoader(String currentLine, BufferedReader reader) {
+        this.currentLine = currentLine;
+        this.reader = reader;
+        loadQuery();
+    }
+
+    private void loadQuery() {
+        Boolean finishedDocument = false;
+
+        while(!finishedDocument) {
+            try {
+                switch (currentLine.charAt(1)) {
+                    case 'I':
+                        index = currentLine.substring(3);
+                        currentLine = reader.readLine();
+//                        System.out.println("Index: " + index);
+                    case 'W':
+                        String buffer = "";
+                        currentLine = reader.readLine();
+                        while (currentLine != null && currentLine.charAt(0) != '.') {
+                            buffer += currentLine + " ";
+                            currentLine = reader.readLine();
+                        }
+                        question = buffer;
+//                        System.out.println("Question: " + question);
+                }
+
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+
+            if(currentLine == null || currentLine.charAt(1) == 'I') {
+                finishedDocument = true;
+            }
+        }
+    }
+
+    public String getCurrentLine() {
+        return currentLine;
+    }
+
+    public String getIndex() {
+        return index;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+}
