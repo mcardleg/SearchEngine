@@ -38,10 +38,7 @@ public class Querier {
 
     private HashMap<String, Float> buildBooster() {
         HashMap<String, Float> boosts = new HashMap<String, Float>();
-        boosts.put("title", 10f);
-//        booster.put("author", 0.04f);
-//        booster.put("bibliography", 0.03f);
-//        booster.put("content", 1.1f);
+        boosts.put("author", 10f);
         return boosts;
     }
 
