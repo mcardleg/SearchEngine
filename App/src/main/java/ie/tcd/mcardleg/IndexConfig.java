@@ -19,13 +19,9 @@ public class IndexConfig {
 
     private IndexWriterConfig config;
 
-    public IndexConfig(String[] args) throws IOException {
-        switch(args[0]) {
-            case "standard": this.analyzer = new StandardAnalyzer();
-            default: this.analyzer = new StandardAnalyzer();
-        }
+    public IndexConfig() throws IOException {
+        this.analyzer = new StandardAnalyzer();
         this.directory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
-
         this.config = new IndexWriterConfig(analyzer);
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
     }

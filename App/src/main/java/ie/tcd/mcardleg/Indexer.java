@@ -21,26 +21,22 @@ public class Indexer {
 
     public Indexer(IndexConfig indexConfig) {
         this.indexConfig = indexConfig;
+        buildIndex();
     }
 
-    public void buildIndex() throws IOException {
+    private void buildIndex() {
+        try {
+            IndexWriter iwriter = new IndexWriter(indexConfig.getDirectory(), indexConfig.getConfig());
 
-//        // Create a new field type which will store term vector information
-//        FieldType ft = new FieldType(TextField.TYPE_STORED);
-//        ft.setTokenized(true); //done as default
-//        ft.setStoreTermVectors(true);
-//        ft.setStoreTermVectorPositions(true);
-//        ft.setStoreTermVectorOffsets(true);
-//        ft.setStoreTermVectorPayloads(true);
+            ArrayList<Document> documents = parseDocuments();
+            System.out.println("Writing documents to index.");
+            iwriter.addDocuments(documents);
+            System.out.println("Finished writing to index.");
 
-        IndexWriter iwriter = new IndexWriter(indexConfig.getDirectory(), indexConfig.getConfig());
-
-        ArrayList<Document> documents = parseDocuments();
-        System.out.println("Writing documents to index.");
-        iwriter.addDocuments(documents);
-        System.out.println("Finished writing to index.");
-
-        iwriter.close();
+            iwriter.close();
+        } catch(Exception e) {
+            System.err.println(e);
+        }
     }
 
     private ArrayList<Document> parseDocuments() throws IOException {

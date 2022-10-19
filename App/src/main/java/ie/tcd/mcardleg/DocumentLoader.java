@@ -60,13 +60,8 @@ public class DocumentLoader {
             currentLine = reader.readLine();
         }
 
-//        if(field == "title") {
-//            System.out.println("Indexing: " + buffer);
-//        }
-
         document.add(new TextField(field, buffer, Field.Store.YES));
 
         return document;
     }
-
 }

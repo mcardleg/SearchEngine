@@ -30,7 +30,6 @@ public class QueryLoader {
                             currentLine = reader.readLine();
                         }
                         question = buffer;
-//                        System.out.println("Question: " + question);
                 }
 
             } catch (Exception e) {

@@ -4,10 +4,9 @@ import java.io.IOException;
 
 public class App {
     public static void main(String[] args) throws IOException {
-        IndexConfig indexConfig = new IndexConfig(args);
+        IndexConfig indexConfig = new IndexConfig();
 
         Indexer indexer = new Indexer(indexConfig);
-        indexer.buildIndex();
 
         Querier querier = new Querier(indexConfig);
         try {
