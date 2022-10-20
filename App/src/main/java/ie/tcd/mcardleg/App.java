@@ -16,7 +16,6 @@ public class App {
         ArrayList<Analyzer> analyzers = new ArrayList<Analyzer>();
         analyzers.add(new StandardAnalyzer());
         analyzers.add(new SimpleAnalyzer());
-        analyzers.add(new KeywordAnalyzer());
         analyzers.add(new EnglishAnalyzer());
 
         ArrayList<Similarity> similarities = new ArrayList<Similarity>();
