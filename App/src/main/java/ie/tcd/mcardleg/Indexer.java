@@ -17,16 +17,16 @@ public class Indexer {
 
     private static final String cranDocumentsDirectory = "../cran/cran.all.1400";
 
-    private IndexConfig indexConfig;
+    private Config config;
 
-    public Indexer(IndexConfig indexConfig) {
-        this.indexConfig = indexConfig;
+    public Indexer(Config config) {
+        this.config = config;
         buildIndex();
     }
 
     private void buildIndex() {
         try {
-            IndexWriter iwriter = new IndexWriter(indexConfig.getDirectory(), indexConfig.getConfig());
+            IndexWriter iwriter = new IndexWriter(config.getDirectory(), config.getIndexWriterConfig());
 
             ArrayList<Document> documents = parseDocuments();
             System.out.println("Writing documents to index.");

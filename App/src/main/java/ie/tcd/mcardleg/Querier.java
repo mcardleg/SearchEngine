@@ -8,6 +8,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -18,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Querier {
 
@@ -26,29 +26,33 @@ public class Querier {
     private static final String CRAN_QUERIES_DIRECTORY = "../cran/cran.qry";
     private static final String RESULTS_DIRECTORY = "../results";
 
-    IndexConfig indexConfig;
+    Config config;
     DirectoryReader ireader;
     IndexSearcher isearcher;
 
-    public Querier(IndexConfig indexConfig) throws IOException {
-        this.indexConfig = indexConfig;
-        this.ireader = DirectoryReader.open(indexConfig.getDirectory());
+    public Querier(Config config) throws IOException {
+        this.config = config;
+        this.ireader = DirectoryReader.open(config.getDirectory());
         this.isearcher = new IndexSearcher(ireader);
     }
 
     private HashMap<String, Float> buildBooster() {
         HashMap<String, Float> boosts = new HashMap<String, Float>();
-        boosts.put("title", 2f);
+        boosts.put("title", 5f);
         return boosts;
+    }
+
+    private void setSimilarity() {
+        isearcher.setSimilarity(config.getSimilarity());
     }
 
     private Query buildQuery(String queryString) throws ParseException {
         QueryParser parser = new MultiFieldQueryParser(
                 new String[] {"title", "author", "bibliography", "text"},
-                indexConfig.getAnalyzer(),
+                config.getAnalyzer(),
                 buildBooster());
 
-        return parser.parse(queryString);
+        return parser.parse(queryString.replace("?", ""));
     }
 
     private ArrayList<String> parseQueries() {
@@ -63,7 +67,7 @@ public class Querier {
 
             while (!finished) {
                 QueryLoader queryLoader = new QueryLoader(currentLine, reader);
-                queries.add(queryLoader.getQuestion().replace("?", ""));
+                queries.add(queryLoader.getQuestion());
                 currentLine = queryLoader.getCurrentLine();
 
                 if (currentLine == null) {
@@ -101,6 +105,8 @@ public class Querier {
 
         ArrayList<String> queries = parseQueries();
 
+        setSimilarity();
+
         System.out.println("Performing queries.");
         Integer queryIndex = 1;
         for (String queryString : queries) {
@@ -118,7 +124,9 @@ public class Querier {
         System.out.println("Writing results to file.");
 
         Directory directory = FSDirectory.open(Paths.get(RESULTS_DIRECTORY));
-        String filename = "results.txt";
+        String filename = config.getAnalyzer().toString()
+                + '_' + config.getSimilarity().toString()
+                + "_results.txt";
         File file = new File (RESULTS_DIRECTORY, filename);
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
@@ -129,7 +137,7 @@ public class Querier {
 
         writer.close();
         directory.close();
-        System.out.println("Finished writing results.");
+        System.out.println("Finished writing results file: " + filename);
     }
 
     public void runQueries() throws IOException, ParseException {

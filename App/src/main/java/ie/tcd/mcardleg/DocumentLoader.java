@@ -30,7 +30,7 @@ public class DocumentLoader {
         while(!finishedDocument) {
 
             switch (currentLine.charAt(1)) {
-                case 'I': document = stringFieldHandler(document, "index");
+                case 'I': document = indexHandler(document);
                 case 'T': document = textFieldHandler(document, "title");
                 case 'A': document = textFieldHandler(document, "author");
                 case 'B': document = textFieldHandler(document, "bibliography");
@@ -45,8 +45,8 @@ public class DocumentLoader {
         return document;
     }
 
-    private Document stringFieldHandler(Document document, String field) throws IOException {
-        document.add(new StringField(field, currentLine.substring(3), Field.Store.YES));
+    private Document indexHandler(Document document) throws IOException {
+        document.add(new StringField("index", currentLine.substring(3), Field.Store.YES));
         currentLine = reader.readLine();
         return document;
     }
